@@ -24,7 +24,8 @@ def login_required(f):
 @app.route('/')
 @login_required
 def home():
-    return "Hello, World!"  # return a string
+    # return "Hello, World!"  # return a string
+    return render_template('index.html')
 
 
 @app.route('/welcome')
