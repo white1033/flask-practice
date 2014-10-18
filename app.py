@@ -1,11 +1,15 @@
 # import the Flask class from the flask module
-from flask import Flask, render_template, redirect, url_for, request, session, flash
+from flask import Flask, render_template, redirect, url_for, request, session, flash, g
 from functools import wraps
+import sqlite3
+# from mosql.query import select
+from mosql.db import Database
 
 # create the application object
 app = Flask(__name__)
 
 app.secret_key = "it's a secret"
+app.database = "sample.db"
 
 
 # login required decorator
@@ -25,7 +29,13 @@ def login_required(f):
 @login_required
 def home():
     # return "Hello, World!"  # return a string
-    return render_template('index.html')
+    g.db = connect_db()
+    with g.db as cur:
+        # mosql 0.9.1 not work on Python 3 :P
+        # cur.execute(select('posts'))
+        cur.execute('SELECT * FROM posts')
+        posts = [{'title': row[0], 'description': row[1]} for row in cur.fetchall()]
+    return render_template('index.html', posts=posts)
 
 
 @app.route('/welcome')
@@ -55,6 +65,8 @@ def logout():
     return redirect(url_for('welcome'))
 
 
+def connect_db():
+    return Database(sqlite3, app.database)
 # start the server with the 'run()' method
 if __name__ == '__main__':
     app.run(debug=True)

@@ -3,4 +3,12 @@
   <h1>Welcome to Flask!</h1>
   <br>
   <p>Click <a href="/logout">here</a> to logout.</p>
+  <br>
+  <h3>Posts:</h3>
+  {% for post in posts %}
+    <strong>Title:</strong> {{ post.title }}
+    <br>
+    <strong>Posts:</strong> {{ post.description }}
+    <br>
+  {% endfor %}
 {% endblock content %}
